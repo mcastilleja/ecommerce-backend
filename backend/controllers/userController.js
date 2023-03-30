@@ -21,8 +21,8 @@ const loginUser = asyncHandler(async(req, res) => {
             first_name : user.first_name,
             last_name : user.last_name,
             email : user.email,
-            is_admin : user.is_admin,
-            is_verified : user.is_verified,
+            account : user.is_admin === true ? 'administrator' : 'user',
+            verified : user.is_verified === true ? 'yes' : 'no',
             token : genToken(user.id)
 
         })
@@ -77,13 +77,25 @@ const getMyData = asyncHandler( async(req, res) => {
     res.json(req.user)
 })
 
+const verifyUser = asyncHandler( async(req, res) => {
+
+    const user = await User.findById(req.params.id)
+
+    if(!user){
+        res.status(400)
+        throw new Error('User not found, valid id required')
+    } 
+
+    await User.findByIdAndUpdate(req.params.id, {is_verified : true}, {new: true})
+
+    res.status(200).json( { message : 'User has been validated'} )
+})
+
 const genToken = (id) => {
     return jwt.sign({id}, process.env.JWT_SECRET, {
         expiresIn : '30d'
     })
 }
-
-
 
 const getMyProducts = asyncHandler( async(req, res) => {
 
@@ -118,14 +130,14 @@ const setAddress = asyncHandler( async(req, res) => {
 })
 
 const updateAddress = asyncHandler( async(req,res) => {
-
+    
     const address = Address.findById(req.params.id)
 
     if(!address){
         res.status(400)
         throw new Error('Address not found')
     }
-
+    
     if(address.user.toString() !== req.user.id) {
         res.status(401)
         throw new Error('Unauthorized access, address does not belong to user')
@@ -161,6 +173,7 @@ module.exports = {
     loginUser,
     registerUser,
     getMyData,
+    verifyUser,
     getMyProducts,
     setAddress,
     updateAddress,
