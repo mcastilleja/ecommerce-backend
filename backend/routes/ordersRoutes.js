@@ -1,6 +1,7 @@
 const express = require('express')
 const router = express.Router()
 
+router.post('/buy')
+router.post('/myorders')
 
-router.post('/')
-router.post('/login')
+module.exports = router
