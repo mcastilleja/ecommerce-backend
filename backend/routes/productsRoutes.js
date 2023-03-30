@@ -1,7 +1,8 @@
 const express = require('express')
 const router = express.Router()
+const { protect } =  require('../middleware/authMiddleware')
 
-router.route('/').get().post()
-router.route('/:id').put().delete()
+router.route('/').get(protect, ).post(protect, )
+router.route('/:id').put(protect, ).delete(protect, )
 
 module.exports = router
