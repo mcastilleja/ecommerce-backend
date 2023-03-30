@@ -3,6 +3,7 @@ const bcrypt = require('bcryptjs')
 const asyncHandler = require('express-async-handler')
 const User = require('../models/userModel')
 const Address = require('../models/addressModel')
+const Product = require('../models/productModel')
 
 const loginUser = asyncHandler(async(req, res) => {
     const { email, password } = req.body
@@ -76,6 +77,27 @@ const getMyData = asyncHandler( async(req, res) => {
     res.json(req.user)
 })
 
+const genToken = (id) => {
+    return jwt.sign({id}, process.env.JWT_SECRET, {
+        expiresIn : '30d'
+    })
+}
+
+
+
+const getMyProducts = asyncHandler( async(req, res) => {
+
+    if(req.user.is_admin === false ){
+        res.status(401)
+        throw new Error('UNAUTHORIZED ACCESS, you do not have permissions for this action')
+    }
+
+    const productList = await Product.find({user: req.user.id})
+
+    res.status(200).json(productList)
+
+})
+
 const setAddress = asyncHandler( async(req, res) => {
 
     const {name, address} = req.body
@@ -135,16 +157,11 @@ const deleteAddress = asyncHandler( async(req,res) => {
 
 })
 
-const genToken = (id) => {
-    return jwt.sign({id}, process.env.JWT_SECRET, {
-        expiresIn : '30d'
-    })
-}
-
 module.exports = {
     loginUser,
     registerUser,
     getMyData,
+    getMyProducts,
     setAddress,
     updateAddress,
     deleteAddress
