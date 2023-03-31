@@ -131,7 +131,7 @@ const setAddress = asyncHandler( async(req, res) => {
 
 const updateAddress = asyncHandler( async(req,res) => {
     
-    const address = Address.findById(req.params.id)
+    const address = await Address.findById(req.params.id)
 
     if(!address){
         res.status(400)
@@ -151,7 +151,7 @@ const updateAddress = asyncHandler( async(req,res) => {
 
 const deleteAddress = asyncHandler( async(req,res) => {
 
-    const address = Address.findById(req.params.id)
+    const address = await Address.findById(req.params.id)
 
     if(!address){
         res.status(400)
