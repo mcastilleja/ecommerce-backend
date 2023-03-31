@@ -110,14 +110,27 @@ const getMyProducts = asyncHandler( async(req, res) => {
 
 })
 
+const getMyAddress = asyncHandler( async(req, res) => {
+    const addresses = await Address.find({ user: req.user.id })
+    res.json(addresses)
+})
+
 const setAddress = asyncHandler( async(req, res) => {
 
     const {name, address} = req.body
+
+    const  searchName = await Address.findOne({address_alias: name})
 
     if( !name || !address ){
         res.status(400)
         throw new Error('All data is required')
     }
+
+    
+    if(searchName) {
+        res.status(400)
+        throw new Error('Sorry, already an address with that name')
+    } 
 
     const newAddress = await Address.create({
         user : req.user.id,
@@ -175,6 +188,7 @@ module.exports = {
     getMyData,
     verifyUser,
     getMyProducts,
+    getMyAddress,
     setAddress,
     updateAddress,
     deleteAddress
