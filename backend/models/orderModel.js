@@ -19,9 +19,8 @@ const orderSchema = mongoose.Schema({
         required : true
     },
     guide : {
-        type : Number,
-        default : n,
-        required : true
+        type : String,
+        required : false
     },
     delivered : {
         type : Boolean,

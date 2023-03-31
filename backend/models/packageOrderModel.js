@@ -11,6 +11,10 @@ const packageOrderSchema = mongoose.Schema({
         ref : 'Product',
         required : true
     },
+    product_name : {
+        type: String,
+        required : [true, 'Product name is required']
+    },
     amount : {
         type : Number,
         default : 1,
